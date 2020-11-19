@@ -119,3 +119,7 @@ end
 function get_params(RN::ReverseNetwork)
     return get_params(RN.network)
 end
+
+
+# Make invertible nets callable objects
+(N::Union{NeuralNetLayer,InvertibleNetwork})(X::Array{Float32,N} where N) = N.forward(X)
