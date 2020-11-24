@@ -92,6 +92,14 @@ end
 
 ## Chain rules for invertible networks
 
+# Forward-mode AD rule
+function frule((_, ΔX, Δθ), net::Union{NeuralNetLayer,InvertibleNetwork}, X)
+
+    ∂Y, Y = net.jacobian(ΔX, Δθ, X)[1:2]
+    return (Y, ∂Y)
+
+end
+
 # General pullback function
 function pullback(net::Union{NeuralNetLayer,InvertibleNetwork}, ΔY::Array{Float32,N}; state::StateInvertibleOperations=GLOBAL_STATE_INVOPS) where N
 
@@ -109,10 +117,7 @@ function pullback(net::Union{NeuralNetLayer,InvertibleNetwork}, ΔY::Array{Float
 
 end
 
-# Forward-mode AD
-# ...
-
-# Reverse-mode AD
+# Reverse-mode AD rule
 function rrule(net::Union{NeuralNetLayer,InvertibleNetwork}, X; state::StateInvertibleOperations=GLOBAL_STATE_INVOPS)
 
     # Forward pass
